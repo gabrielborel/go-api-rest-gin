@@ -43,6 +43,14 @@ func HandleCreateNewStudent(ctx *gin.Context) {
 		return
 	}
 
+	err = models.ValidateStudentData(&student)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	database.DB.Create(&student)
 	ctx.JSON(http.StatusCreated, student)
 }
@@ -65,6 +73,14 @@ func HandleUpdateStudent(ctx *gin.Context) {
 	database.DB.First(&student, id)
 	
 	err := ctx.ShouldBindJSON(&student)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	err = models.ValidateStudentData(&student)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),

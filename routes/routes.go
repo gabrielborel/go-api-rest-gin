@@ -1,7 +1,7 @@
 package routes
 
 import (
-	studentsController "api-rest-gin/controllers"
+	"api-rest-gin/controllers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,12 +9,18 @@ import (
 func HandleRoutes() {
 	r := gin.Default()
 
-	r.GET("/students", studentsController.HandleGetAllStudents)
-	r.POST("/students", studentsController.HandleCreateNewStudent)
-	r.GET("/students/:id", studentsController.HandleGetStudentById)
-	r.GET("/students/cpf/:cpf", studentsController.HandleGetStudentByCPF)
-	r.DELETE("/students/:id", studentsController.HandleDeleteStudent)
-	r.PATCH("/students/:id", studentsController.HandleUpdateStudent)
+    r.LoadHTMLGlob("templates/*")
+    r.Static("/assets", "./assets")
+
+	r.GET("/students", controllers.HandleGetAllStudents)
+	r.POST("/students", controllers.HandleCreateNewStudent)
+	r.GET("/students/:id", controllers.HandleGetStudentById)
+	r.GET("/students/cpf/:cpf", controllers.HandleGetStudentByCPF)
+	r.DELETE("/students/:id", controllers.HandleDeleteStudent)
+	r.PATCH("/students/:id", controllers.HandleUpdateStudent)
+    r.GET("/index", controllers.HandleShowIndexPage)
+
+    r.NoRoute(controllers.HandleShowRouteNotFoundPage)
 
 	r.Run()
 }

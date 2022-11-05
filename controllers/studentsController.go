@@ -1,19 +1,20 @@
 package controllers
 
 import (
+	"net/http"
+
 	"api-rest-gin/database"
 	"api-rest-gin/models"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func HandleGetAllStudents(ctx *gin.Context) {
-	var students []models.Student	
+	var students []models.Student
 
 	database.DB.Find(&students)
 
-	ctx.JSON(http.StatusOK, students) 
+	ctx.JSON(http.StatusOK, students)
 }
 
 func HandleGetStudentById(ctx *gin.Context) {
@@ -29,12 +30,12 @@ func HandleGetStudentById(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, student) 
+	ctx.JSON(http.StatusOK, student)
 }
 
 func HandleCreateNewStudent(ctx *gin.Context) {
 	var student models.Student
-	
+
 	err := ctx.ShouldBindJSON(&student)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -69,9 +70,9 @@ func HandleDeleteStudent(ctx *gin.Context) {
 func HandleUpdateStudent(ctx *gin.Context) {
 	id := ctx.Params.ByName("id")
 	var student models.Student
-	
+
 	database.DB.First(&student, id)
-	
+
 	err := ctx.ShouldBindJSON(&student)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -89,9 +90,7 @@ func HandleUpdateStudent(ctx *gin.Context) {
 	}
 
 	database.DB.Model(&student).UpdateColumns(student)
-	ctx.JSON(http.StatusOK, gin.H{
-		"mensagem": "Aluno atualizado com sucesso!",
-	})
+	ctx.JSON(http.StatusOK, student)
 }
 
 func HandleGetStudentByCPF(ctx *gin.Context) {
@@ -107,5 +106,18 @@ func HandleGetStudentByCPF(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, student) 
+	ctx.JSON(http.StatusOK, student)
+}
+
+func HandleShowIndexPage(c *gin.Context) {
+    var students []models.Student
+    database.DB.Find(&students)
+
+    c.HTML(http.StatusOK, "index.html", gin.H{
+        "students": students,
+    })
+}
+
+func HandleShowRouteNotFoundPage(c *gin.Context) {
+    c.HTML(http.StatusNotFound, "404.html", nil)
 }

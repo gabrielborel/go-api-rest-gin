@@ -1,8 +1,9 @@
 package database
 
 import (
-	"api-rest-gin/models"
 	"log"
+
+	"api-rest-gin/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -21,5 +22,8 @@ func ConnectWithDatabase() {
 		log.Panic("Erro ao conectar com o banco de dados", err.Error())
 	}
 
-	DB.AutoMigrate(&models.Student{})
+	err := DB.AutoMigrate(&models.Student{})
+	if err != nil {
+		return
+	}
 }
